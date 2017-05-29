@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>How-To: Random Twitter Generator</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="animate.css" type="text/css">
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="script.js" type="text/javascript"></script>
+  </head>
+  <body>
+
+    <div id="guide_title" align="center">
+      <div class="title_left animated bounceInLeft">
+        <h1>How-To:</h1>
+      </div>
+      <div class="animated fadeIn" align="center">
+        <img src="img/twitter-256.png" alt="twitter icon">
+      </div>
+      <div class="title_right animated bounceInRight">
+        <h1>Twitter Generator</h1>
+      </div>
+    </div>
+
+      <br><br>
+      <div class="container" align="center">
+        <h2>Welcome</h2>
+        <p>This guide will cover how create a random tweet for Twitter using the Copora API and Dino Ipsum API.  So, to begin...</p>
+
+        <h2>What is Copora?</h2>
+
+        <p><a href="https://github.com/dariusk/corpora">Copora</a> is a RESTful API that qas designed to hold a large amount of information with different adjectives, nouns, and categories that are used to create test programs and apps.  I chose this API since it would allow us to use a variety of different info and categories to create our tweets.  But that is not all, I decided to use another API as well, this one being...</p>
+        <br>
+        <h2>Dino Ipsum</h2>
+
+        <p><a href="http://dinoipsum.herokuapp.com/">Dino Ipsum</a> is a RESTful API that is designed to generate a variety of dinosaur names that can be used to populate programs or be used as text.  Most commonly, it’s used as text filler for projects and static webpages.  For this guide however, it will be used to help generate the subject of our Twitter bot.</p>
+
+        <br>
+        <p>Both of these are APIs that will help us get what we need to build our program.  But now, you must be asking...</p>
+
+
+
+        <h2>What is an API?</h2>
+        <p>An API, or application programming interface, is a set of routines, protocols and tools used in building software apps.  It helps specify how the components in each software program should interact and display in the program.  There are a variety of different APIs that each do their own thing, from Libraries and Frameworks, Web APIs, Remote APIs, and Operating Systems.<br>
+        For this guide, we will be using a Web API, that will be pulling information from server-side endpoints to allow us to pull information as either Extensible Markup Language(XML), or Javascript Object Notions(JSON).  With permission, we can access information from these websites, and create web apps to allow us to search and display the requests made.  For what we are going to do, we will be requesting JSON from the API, and will display through a UI interface.</p>
+
+        <h2>Getting the API links</h2>
+
+        <p>Before we begin, We need to go retrieve the API links that will allow us to generate our phrases:</p>
+
+        <br>
+
+        <p>We can do a basic call to [link], that will give us the following JSON data:</p>
+        <br>
+        <div class="container jumbotron" align="left" id="corpora_info">
+           {"description":"an API for the corpora. to access a data, navigate to '/{key}/{value}', for example: '/animals/dinosaurs' or '/words/literature/shakespeare_words'","data":{"animals":["birds_antarctica","birds_north_america","common","dinosaurs","dogs"],"archetypes":["artifact","character","event","setting"],"architecture":["rooms"],"art":["isms"],"colors":["crayola","paints","web_colors"],"corporations":["cars","djia","fortune500","nasdaq","newspapers"],"film-tv":["tv_shows"],"foods":["beer_categories","beer_styles","breads_and_pastries","condiments","curds","fruits","herbs_n_spices","hot_peppers","menuItems","pizzaToppings","sandwiches","vegetables"],"games":["cluedo","jeopardy_questions","pokemon","scrabble","street_fighter_ii","trivial_pursuit","wrestling_moves"],"geography":["canada_provinces_and_territories","countries","english_towns_cities","london_underground_stations","oceans","rivers","us_cities","venues"],"governments":["nsa_projects","uk_political_parties","us_federal_agencies","us_mil_operations"],"humans":["authors","bodyParts","britishActors","englishHonorifics","firstNames","moods","occupations","prefixes","richpeople","scientists","spanishFirstNames","spanishLastNames","spinalTapDrummers","suffixes","us_presidents","wrestlers"],"instructions":["laundry_care"],"materials":["abridged-body-fluids","building-materials","carbon-allotropes","decorative-stones","fabrics","fibers","layperson-metals","metals","natural-materials","packaging","plastic-brands","sculpture-materials","technical-fabrics"],"music":["genres","mtv_day_one"],"mythology":["lovecraft"],"objects":["objects"],"plants":["cannabis","flowers"],"science":["elements","hail_size","minor_planets","planets","pregnancy","toxic_chemicals"],"technology":["appliances","computer_sciences","fireworks","guns_n_rifles","knots","lisp"],"words":["adjs","adverbs","closed_pairs","common","eggcorns","nouns","oprah_quotes","personal_nouns","prefix_root_suffix","proverbs","resume_action_words","rhymeless_words","spells","states_of_drunkenness","us_president_quotes","verbs"],"words/literature":["mr_men_little_miss","shakespeare_phrases","shakespeare_sonnets","shakespeare_words"],"words/stopwords":["ar","bg","cs","da","de","en","es","fi","fr","gr","it","jp","lv","nl","no","pl","pt","ru","sk","sv","tr"],"words/word_clues":["clues_five","clues_four","clues_six"]}}
+
+        </div>
+        <br><br>
+        <p>We can also go to the Dino Ipsum site, and it will show the URL to call a single paragraph with one word, which is all we will need for the API.  See below for an example:</p><br>
+        <div class="container jumbotron" id="dino-URL">
+          <img src="img/dino_api.png" alt="Dino Ipsum API URL">
+
+        </div>
+
+        <p>To properly create our Twitter bot, we need to break down what kind of APIs we need to pull to build our tweet.  We will need the following:</p>
+        <br>
+        <ul id="api_list">
+          <li><strong>Dinosaur name:</strong> http://dinoipsum.herokuapp.com/api/?format=html&amp;paragraphs=1&words=1</li>
+          <li><strong>Verb:</strong> http://corpora-api.herokuapp.com/words/verbs</li>
+          <li><strong>Job:</strong> http://corpora-api.herokuapp.com/humans/occupations</li>
+          <li><strong>Company:</strong> http://corpora-api.herokuapp.com/corporations/fortune500</li>
+          <li><strong>Food:</strong> http://corpora-api.herokuapp.com/foods/fruits</li>
+        </ul>
+
+
+
+
+        <h2>Setting up our Project</h2>
+<br>
+        <p>Now that we have our API Key, we can now go ahead and start work on creating a web app for our API Key.  To begin, let's create the folders:<br>
+
+          <pre>
+            dino-tweet/
+            ├── js/
+            │   ├── dino-interface.js
+            │   └── dinoTweet.js
+            ├── scss/
+            │   └── styles.scss
+            └── index.html</pre><br>
+        For now, don't worry about what the files will be, we will get to those soon.  For now, in the command line enter in: <span class="command_line">$npm init</span>.<br>Go thorugh the list entering in the info, and in the end, you will have a package.json file that looks like the following: </p>
+
+        <pre>{
+          "name": "dinotwitter-page",
+          "version": "1.0.0",
+          "description": "Random Twitter generator using Copora and Dino Ipsum API",
+          "main": "index.js",
+          "scripts": {
+            "test": "echo \"Error: no test specified\" && exit 1"
+          },
+          "keywords": [
+            "Dino",
+            "API"
+          ],
+          "author": "OSU student",
+          "license": "ISC"
+        }</pre>
+
+        Once this is completed we will install a node package that will help us with building our app called Gulp.
+
+
+      </div>
+
+      <h2>So what is gulp.js?</h2>
+<div class="container info_text">
+gulp helps with optimizing and automating the code and other node packages, helping with directing and running different programs with minimal effort.  It acts much like an air traffic controller, helping direct what each plugin and module does, and prevents them from going ahead or causing any errors and crashes.  This helps save a lot of time working on time-consuming and repetitive tasks, and can free up more time for working on other parts of the program.
+
+
+While we are also saving it to the project, we should install it globally so that we can use gulp in our terminal.  this can be done by entering in <span class="command_line">$ npm install gulp -g</span> into the command line.
+
+Next, we will need to install our next package, browserify.
+<br>
+<br>
+</div>
+<div class="container">
+<pre id="browserify" class="hideout">
+$ npm install browserify --save-dev
+</pre>
+</div>
+<div class="container info_text">
+Browserify allows for export and required to be translated from the browser into javascript, which will be used by node.js to use that info to execute our call.
+<br>
+
+Along with browserify, we will install several other modules that will be used for this project, and can be used in other projects as well.  Go ahead and enter in the following into the command line:
+</div>
+<br><br>
+<div class="container">
+  <pre>
+$ npm install vinyl-source-stream --save-dev
+$ npm install gulp-concat --save-dev
+$ npm install gulp-uglify --save-dev
+$ npm install gulp-util --save-dev
+$ npm install del --save-dev
+$ npm install jshint --save-dev
+$ npm install gulp-jshint --save-dev
+</pre>
+</div>
+
+
+
+<div class="container info_text">
+As you may have noticed when we saved the module, -dev was added onto the end.  This let’s our program know gulp will be saved as a development dependency, which means it will be used for app development and build process rather than in our production.  By separating these dependencies to development and production, it will allow our final, app to run faster once completed.
+<br>
+Now for what each of these packages do, they help us able to run and have our program able to perform tasks that are required and can allow our project to run.
+<br>
+They do the following:<br>
+<ul>
+<li>vinyl-source-stream: Takes browserified code and places it into a new file as the program runs.</li>
+<li>concat: Consolidates all js files into a single script tag, reducing loading time.</li>
+<li>uglify: Removes unnecessary characters from concatenated files.</li>
+<li>utility: Allows gulp build of either development or production app.</li>
+<li>del: Cleans up environment before a build by deleting build and tmp folders.</li>
+<li>jshint: Helps spot errors in files and indicating what the problem is.</li>
+</ul>
+<br>
+Now that we have all of these installed, we need to create a task for each module to the gulpfile.js in order for it to run properly and function as we want them to.
+<br>
+As stated before, browserify requires us to have each installed module be required variables, allowing us to set it at the top of out file.  Once we have all our required variables, we can start creating tasks for each one, and have them run the necessary code.  See below the code for our gulpfile, as well as notes for what each task is, and what each part of the task does.
+</div>
+<div class="container">
+<p data-height="350" data-theme-id="0" data-slug-hash="QpjZKq" data-default-tab="js" data-user="russspruce" data-embed-version="2" data-pen-title="Gulpfile" class="codepen">See the Pen <a href="http://codepen.io/russspruce/pen/QpjZKq/">Gulpfile</a> by Andrew Russo (<a href="http://codepen.io/russspruce">@russspruce</a>) on <a href="http://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script></div>
+
+
+<div class="container info_text">
+Now let's go to our index.html, and create a page that will be populated by the info we get from the APIs, and adding them into &lt;span&gt; tags.</div>
+
+<div class="container">
+
+<pre>
+
+  &lt;head&gt;
+
+    &lt;script type="text/javascript" src="build/js/app.js"&gt;&lt;/script&gt;
+    &lt;title&gt;Dino Twitter Bot&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+      &lt;h1&gt;Dino Twitter Bot&lt;/h1&gt;
+      &lt;br&gt;
+      &lt;button class="btn"&gt;Get a Tweet&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id= "allTweets"&gt;
+      &lt;h2&gt;@&lt;span id="dinoTwitter"&gt;&lt;/span&gt; - Dinosaur &lt;span id="occupation"&gt;&lt;/span&gt;&lt;/h2&gt;
+      &lt;div&gt;
+         &lt;span id="dino"&gt; &lt;/span&gt; &lt;span id="verb"&gt;&lt;/span&gt; my &lt;span id="fruits"&gt;&lt;/span&gt;... I'm gonna quit &lt;span id="companies"&gt;&lt;/span&gt; ! &lt;br&gt; &lt;span id="emoji"&gt;&lt;/span&gt;
+         &lt;br&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+
+</pre>
+</div>
+<div class="container info_text">
+As you may have noticed, for our &lt;script&gt; tag, we have in the code the following:
+</div>
+<div class="container">
+  <pre>
+  &lt;script type="text/javascript" src=“build/js/app.js"&gt;&lt;/script&gt;</pre>
+</div>
+<div class="container info_text">
+Thanks to having Browserfy, we only need to make one call to our js file to have it run.
+
+<br>
+<br>
+
+Now that we have our gulpfile and a form, let’s start by creating the javascript files that will allow us to communicate with the web API, and get the JSON to display.  But before we do that, we need to be able to have it so that our frontend js will be separate from our backend js.  The main reason we want to keep these two parts separated is that it allows us to be able to keep everything organized, prevent any kind of version conflict that may be required for one end, and help optimize each side of the program to function at it’s highest capacity.  So, to help us with creating the frontend/backend, we will be using Bower to help us build and run the frontend.
+</div>
+
+<h2>What is Bower?</h2>
+<div class="container info_text">
+Bower is another package manager, like npm, used to help install frontend packages like jQuery and Bootstrap.  Another useful ability for bower is that it is not only limited to Node, but can be used with other frameworks, like AngularJS and Ruby on Rails.
+<br>
+To begin, let’s install bower globally with <span class="command_line">$ npm install bower -g</span>, following up by entering in <span class="command_line">bower init</span> into the command line to create a bower.json file.  It will copy a lot of the info that already exists in our package.json file, but we can skip all those steps by just hitting Enter to have everything set up as default.
+<br><br>
+Now that we have our bower.json file set up, we can now install frontend dependencies, starting with jQuery.  This can be done by entering in <span class="command_line">$ bower install jquery --save</span> into pir command line to download the packages and save them onto our local machine, much like how node_modules works.  Another added benefit is that now that we have the necessary files saved locally, we don’t need to do any CDN calls that we would otherwise rely on.  This can be put into the header of our HTML page as the following:
+</div>
+<div class="container">
+  <pre>
+&lt;script src="bower_components/jquery/dist/jquery.min.js"&gt;&lt;/script&gt;
+</pre>
+</div>
+<div class="container">
+Next, let’s install Bootstrap with $ bower install bootstrap —save, and enter in the following in our form:
+<pre>
+&lt;link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"&gt;
+&lt;script src="bower_components/bootstrap/dist/js/bootstrap.min.js"&gt;&lt;/script&gt;
+</pre>
+
+
+We should now have a solid HTML page:
+</div>
+<br>
+<div class="container">
+  <p data-height="350" data-theme-id="0" data-slug-hash="GmaqRR" data-default-tab="html" data-user="russspruce" data-embed-version="2" data-pen-title="Bower_HTML" class="codepen">See the Pen <a href="https://codepen.io/russspruce/pen/GmaqRR/">Bower_HTML</a> by Andrew Russo (<a href="https://codepen.io/russspruce">@russspruce</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+</div>
+
+<div class="container info_text">
+But once again, we are starting to have a lot of &lt;script&gt; and &lt;link&gt; tags in our HTML page, which can slow us down.  To help solve this, we can use npm to  install bower-files to help.
+</div>
+<div class="container">
+  <pre id="bower_files" class="hideout">
+$ npm install bower-files --save-dev</pre>
+</div>
+<div class="container info_text">
+We will also create another gulp task and required variable:
+</div>
+<div class="container">
+  <pre>
+var lib = require('bower-files')();
+
+gulp.task('bowerJS', function () {
+  return gulp.src(lib.ext('js').files)
+    .pipe(concat('vendor.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./build/js'));
+});
+</pre>
+</div>
+<div class="container info_text">
+Once completed, we can replace the previous &lt;script&gt; links with the following:
+</div>
+<div class="container">
+  <pre>
+&lt;script src="build/js/vendor.min.js"&gt;&lt;/script&gt;
+</pre>
+</div>
+<div class="container info_text">
+We can also replace the bootstrap &lt;link&gt; with this one:</div>
+<div class="container">
+  <pre>
+&lt;link rel="stylesheet" href="build/css/vendor.css"&gt;
+</pre>
+</div>
+<div class="container info_text">
+As with all packages going through gulp, a task is required as well:
+</div>
+<div class="container">
+  <pre>
+gulp.task('bowerCSS', function () {
+  return gulp.src(lib.ext('css').files)
+    .pipe(concat('vendor.css'))
+    .pipe(gulp.dest('./build/css'));
+});</pre></div>
+<div class="container info_text">
+It should be noted that there is a difference with this task, as it is looking for files that end in .css, so we need to modify our <span id=“varlib”>var lib</span> to be able to call and pass the Bootstrap files through the bower-files package, resulting in the following:</div>
+<div class="container">
+  <pre>
+var lib = require('bower-files')({
+  "overrides":{
+    "bootstrap" : {
+      "main": [
+        "less/bootstrap.less",
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+});</pre></div>
+<div class="container info_text">
+We can also create a task to allow these two Bower tasks to run simultaneously, since they won’t cause any issues:</div>
+<div class="container">
+  <pre>
+gulp.task('bower', ['bowerJS', ‘bowerCSS']);
+</pre></div>
+
+<div class="container info_text">
+Finally, we will need to change our build task so that it will run bower next time we do a build, giving us the following changes:</div>
+<div class="container">
+  <pre>
+gulp.task('build', ['clean'], function(){
+  if (buildProduction) {
+    gulp.start('minifyScripts');
+  } else {
+    gulp.start('jsBrowserify');
+  }
+  gulp.start('bower');
+});</pre></div>
+
+<div class="container info_text">
+After all of this, we should have our new gulpfile.js that should look like so:
+</div>
+<div class="container">
+  <p data-height="350" data-theme-id="0" data-slug-hash="mWegPa" data-default-tab="js" data-user="russspruce" data-embed-version="2" data-pen-title="Gulpfile_bower" class="codepen">See the Pen <a href="http://codepen.io/russspruce/pen/mWegPa/">Gulpfile_bower</a> by Andrew Russo (<a href="http://codepen.io/russspruce">@russspruce</a>) on <a href="http://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+</div>
+
+<div class="container info_text">
+Now that we have a good set-up of our front end code, let’s finally get started on creating the server side calls that will get us the information we need.  To start, we will need to build our servers and have them sync with our app.  To do this, we will need to create a connection that will allow us to update the files that are on the server, and to have reload and sync with our browser if necessary.  This can be achieved by installing the package BrowserSync.</div>
+<div class="container">
+  <pre id="browser_sync" class="hideout">
+$ npm install browser-sync --save-dev</pre>
+</div>
+<div class="container info_text">
+Continuing with what we have done with previous packages, we will need to add a variable and a task to our gulpfile.</div>
+
+<div class="container">
+  <pre>
+var browserSync = require(‘browser-sync').create();
+
+gulp.task('serve', function() {
+  browserSync.init({
+    server: {
+      baseDir: "./",
+      index: "index.html"
+    }
+  });</pre></div>
+<div class="container info_text">
+The task will tell the server that we want to start in the directory we are currently in, and the file that we wish for the app to start on, in this case being index.html.  Now whenever we start gulp serve, it will run both the app and the server.
+<br><br>
+But since we are working with an app that will constantly be updating with new information, we need to have it so that the server can replace the files and reload the browser whenever it detects any changes.  This can be done by using gulp.watch for js files and bower.js, changing the task to look like this:
+</div>
+<div class="container">
+  <pre>
+gulp.task('serve', function() {
+  browserSync.init({
+    server: {
+      baseDir: "./",
+      index: "index.html"
+    }
+  });
+
+  gulp.watch(['js/*.js'], ['jsBuild']);
+  gulp.watch(['bower.json'], ['bowerBuild']);
+
+});</pre></div>
+<div class="container info_text">
+Whenever a change is detected, it will trigger the corresponding tasks to allow browserSync.  Let’s go ahead and create the following tasks:
+</div>
+<div class="container">
+  <pre>
+gulp.task('jsBuild', ['jsBrowserify', 'jshint'], function(){
+  browserSync.reload();
+});
+
+
+gulp.task('bowerBuild', ['bower'], function(){
+  browserSync.reload();
+});</pre></div>
+<div class="container">
+We can make as many tasks that would trigger a reload as we wish. So we shall add one more that will allow the browser to reset whenever a change is made to an html file.  As a result, all of our tasks should look like this:
+</div>
+<div class="container">
+  <pre>
+gulp.task('serve', function() {
+  browserSync.init({
+    server: {
+      baseDir: "./",
+      index: "index.html"
+    }
+  });
+
+  gulp.watch(['js/*.js'], ['jsBuild']);
+  gulp.watch(['bower.json'], ['bowerBuild']);
+  gulp.watch(['*.html'], ['htmlBuild']);
+
+});
+
+gulp.task('htmlBuild', function() {
+  browserSync.reload();
+});
+
+gulp.task('jsBuild', ['jsBrowserify', 'jshint'], function(){
+  browserSync.reload();
+});
+
+gulp.task('bowerBuild', ['bower'], function(){
+  browserSync.reload();
+});</pre></div>
+<div class="container info_text">
+But looking at it now, we may realize that our page seems a bit bare.  To help with this, we can add a bit of styling using Sass(syntactically awesome stylesheets).  To do this, we will have to add a few programs to our computer.  First, make sure homebrew is up to date by entering the following into the command line:</div>
+<div class="container">
+  <pre id="homebrew" class="hideout">
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”</pre></div>
+<div class="container info_text">
+Follow up by installing Ruby:
+</div>
+<div class="container">
+  <pre id="ruby" class="hideout">
+$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”</pre></div>
+<div class="container info_text">
+Finally, we can install Sass:</div>
+<div class="container">
+  <pre id="sass" class="hideout">
+$ gem install sass
+</pre></div>
+<div class="container info_text">
+Now that we have Sass on our computers, we can add them to our gulpfile along with the source map with a single command line entry:</div>
+<div class="container info_text">
+<pre>
+$ npm install gulp-sass gulp-sourcemaps —save-dev
+</pre></div>
+<div class="container info_text">
+As always, we should require them in our gulp file and create a task.</div>
+<div class="container">
+  <pre>
+var sass = require('gulp-sass');
+var sourcemaps = require(‘gulp-sourcemaps');
+
+[...]
+
+gulp.task('cssBuild', function() {
+  return gulp.src(['scss/*.scss'])
+    .pipe(sourcemaps.init())
+    .pipe(sass())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./build/css'))
+    .pipe(browserSync.stream());
+});</pre></div>
+
+<div class="container info_text">
+You may noticed that we added browserSync to the end of this task, so that it will know to update overtime as updates are made.  We will have to create the corresponding gulp.watch
+task:</div>
+<div class="container">
+  <pre>
+gulp.watch(["scss/*.scss"], [‘cssBuild']);
+</pre></div>
+<div class="container info_text">
+Along with this, let’s go ahead and update our build gulp.task:
+</div>
+<div class="container">
+  <pre>
+gulp.task('build', ['clean'], function(){
+  if (buildProduction) {
+    gulp.start('minifyScripts');
+  } else {
+    gulp.start('jsBrowserify');
+  }
+  gulp.start('bower');
+  gulp.start('cssBuild');
+});</pre></div>
+<div class="container info_text">
+We will need to create a folder, scss, to host our files.  In there, the scss will differ from css, as we can now nest our style for buttons and colors within one another, making it easier for us to create styling.<br><br>
+Here is one simple example that we will place in our SCSS folder of our project:
+</div>
+<div class="container">
+  <pre>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 18pt;
+    }
+
+    .box {
+      padding-top: 30px;
+      font-size: 25pt;
+      text-align: center;
+      .btn {
+        text-align: center;
+        font-size: 20pt;
+      }
+    }
+
+    #allTweets {
+      display: none;
+      text-align: center;
+      margin-top: 60px;
+    }
+    img {
+      padding-top: 50px;
+      padding-left: 60px;
+
+    }
+
+    h1{
+      margin-top: 200px;
+    }</pre>
+</div>
+
+<div class="container info_text">
+Now, the completion of the server’s ability to update with new changes to multiple files, we can now begin working on building our javascript files.  As stated before, we will be creating two files: an interface js for the frontend, and a backend that will host our object.
+<br><br>
+Let's go ahead and open up our dinoTweet.js file, and start creating the calls needed to pull the info:</div>
+<br>
+<div class="container info_text">
+The purpose behind our object is that it will perform all the actions of fetching the JSON data, and exporting it to our interface.  To allow this export to happen, we need to create the function:
+</div>
+<div class="container">
+  <pre>
+exports.getInfo = function(){
+};</pre></div>
+
+<div class="container info_text">
+Next for out dino-interface.js, let’s create our jQuery function that will pass the different API calls from the different Corpora APIs and the Dino Ipsum APIs, and use those to populate our HTML page with a random Tweet:
+</div>
+<div class="container">
+  <pre>
+    $(document).ready(function() {
+      $('.btn').click(function() {
+        $('#allTweets').show();
+        getVerb(displayVerb);
+        getOccupation(displayOccupation);
+        getCompany(displayCompany);
+        getFruit(displayFruit);
+        getDino(displayDino);
+        getDinoTwitter(displayDinoTwitter);
+</pre></div>
+<div class="container info_text">
+This will allow the program to grab the inputted username, but now we need to pass it in our Object file, dinoTweet.js.</div>
+
+
+
+<div class="container info_text">
+With the links already set up, we should set up our calls so that it will randomly select an object in the JSON array, and use that to populate our page.</div>
+
+<div class="container info_text">
+In order to get the data we want, we will need to use “response” to declare what parts of the data we want.  For now, pull data for repo name, description, last created and updated, and whether the repo has a GH page.  We will take this information, and create a prototype that will get the information asynchronously, and have it so it will append to a class we will set in our HTML:</div>
+<div class="container">
+  <p data-height="350" data-theme-id="0" data-slug-hash="rmgwoo" data-default-tab="js" data-user="russspruce" data-embed-version="2" data-pen-title="DT_prototype" class="codepen">See the Pen <a href="https://codepen.io/russspruce/pen/rmgwoo/">DT_prototype</a> by Andrew Russo (<a href="https://codepen.io/russspruce">@russspruce</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script></div>
+
+<div class="container info_text">
+By having then(function(response), the code will not run to retrieve the information until it get’s a response back from the servers.  Once that happens, then  will the code start pulling data back from the response, and send that to our dino-interface.js file.  For extra measure, we let’s add an error function that will notify us if an error has occurred.  Now, let’s go back to our frontend js and make sure that the two are connected.
+<br><br>
+We now need add the function that will require us to get the response data from our prototype.
+</div>
+<div class="container">
+  <pre>
+    var DinoTweet = require('./../js/dinoTweet.js').DinoTweet;
+    var getVerb = require('./../js/dinoTweet.js').getVerb;
+    var getOccupation = require('./../js/dinoTweet.js').getOccupation;
+    var getCompany = require('./../js/dinoTweet.js').getCompany;
+    var getFruit = require('./../js/dinoTweet.js').getFruit;
+    var getDino = require('./../js/dinoTweet.js').getDino;
+    var getDinoTwitter = require('./../js/dinoTweet.js').getDinoTwitter;</pre></div>
+<div class="container info_text">
+From here, we can start building a callback function, that will take in the information, and allow us to display it on our HTML page.  When making the function, make sure that our data is properly matched so that we can have it populate the proper variables:</div>
+<div class="container"><pre>
+  var displayVerb = function(dataReturnedFromAPI) {
+    $('#verb').text(dataReturnedFromAPI);
+  };
+
+  var displayOccupation = function(dataReturnedFromAPI) {
+    $('#occupation').text(dataReturnedFromAPI);
+  };
+
+  var displayCompany = function(dataReturnedFromAPI) {
+    $('#companies').text(dataReturnedFromAPI);
+  };
+
+  var displayFruit = function(dataReturnedFromAPI) {
+    $('#fruits').text(dataReturnedFromAPI);
+  };
+
+  var displayDino = function(dataReturnedFromAPI) {
+    $('#dino').text(dataReturnedFromAPI);
+  };
+
+  var displayDinoTwitter = function(dataReturnedFromAPI) {
+    $('#dinoTwitter').text(dataReturnedFromAPI);
+  };</pre></div>
+<div class="container info_text">
+Finally, let’s update our HTML page so that it can display the info in the browser.  It can be done by having a simple div tag with the class “showGithub” so that our callback can be appended:
+</div>
+<div class="container"><pre>
+&lt;!DOCTYPE&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" href="build/css/styles.css"&gt;
+    &lt;script src="build/js/vendor.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="build/js/app.js"&gt;&lt;/script&gt;
+    &lt;title&gt;Github Retriever&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;div class="box"&gt;
+  &lt;h1&gt;Dino Twitter Bot&lt;/h1&gt;
+  &lt;br&gt;
+  &lt;button class="btn btn-danger"&gt;Get a Tweet&lt;/button&gt;
+&lt;/div&gt;
+&lt;div id= "allTweets"&gt;
+  &lt;h2&gt;@&lt;span id="dinoTwitter"&gt;&lt;/span&gt; - Dinosaur &lt;span id="occupation"&gt;&lt;/span&gt;&lt;/h2&gt;
+  &lt;div&gt;
+     &lt;span id="dino"&gt; &lt;/span&gt; &lt;span id="verb"&gt;&lt;/span&gt; my &lt;span id="fruits"&gt;&lt;/span&gt;... I'm gonna quit &lt;span id="companies"&gt;&lt;/span&gt; ! &lt;br&gt; &lt;span id="emoji"&gt;&lt;/span&gt;
+     &lt;br&gt;
+     &lt;img src="/dino.png"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<div class="container info_text">
+Finally, we have our Twitter bot!  It is able to generate a variety of different tweets that can be used for fun and amusement!
+<br>
+</div>
+
+<br>
+<p class="container"> With the completed project, all you will need to do now is to enter into the command line to get the project running is <span class="command_line">$ gulp build</span> and <span class="command_line">$ gulp serve</span> to run the program.  Thank you for taking the time to explore, and feel free to use any of the resources provided here to help you with futer projects</p>
+
+<h1 align="center">Best of Luck!</h1>
+
+
+<h2>Credits</h2>
+<div class="credit_section container" align="center">
+<strong>Sources:</strong><br>
+<a href="http://corpora-api.herokuapp.com/">Corpora API</a><br>
+<a href="http://dinoipsum.herokuapp.com/">Dino Ipsum</a><br>
+<a href="http://gulpjs.com/">Gulp.js</a><br>
+<a href="https://bower.io/">Bower</a><br>
+<a href="http://sass-lang.com/">Sass</a><br>
+<a href="https://github.com/Russspruce/twitter_demo.git">Demo Repository</a><br><br>
+
+ <strong>Webpage credits:</strong><br>
+
+<a href="http://getbootstrap.com/">BootStrap:</a> <a href="http://getbootstrap.com/">http://getbootstrap.com/</a><br>
+
+<a href="https://daneden.github.io/animate.css/">Animate.css:</a> <a href="https://daneden.github.io/animate.css/">https://daneden.github.io/animate.css/</a><br>
+
+<a href="http://codepen.io/">CodePen:</a> <a href="http://codepen.io/">http://codepen.io/</a>
+
+
+    </div>
+    <div align="center">
+      <img src="img/end.png" alt="End image">
+    </div>
+
+  </body>
+</html>
